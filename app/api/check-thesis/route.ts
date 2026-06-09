@@ -21,19 +21,37 @@ export async function POST(req: Request) {
 
     const text = result.value;
 
-    const checks = {
-      certificate1: text.includes("CERTIFICATE"),
-      abstract: text.includes("ABSTRACT"),
-      acknowledgement: text.includes("ACKNOWLEDGEMENT"),
-      bibliography: text.includes("BIBLIOGRAPHY"),
-      introduction: text.includes("INTRODUCTION"),
-      discussion: text.includes("DISCUSSION"),
-      summary:
-        text.includes("SUMMARY AND CONCLUSION"),
-    };
+    const rules = [
+      "CERTIFICATE-I",
+      "CERTIFICATE-II",
+      "ACKNOWLEDGEMENT",
+      "ABSTRACT",
+      "CONTENTS",
+      "INTRODUCTION",
+      "REVIEW OF LITERATURE",
+      "MATERIALS AND METHODS",
+      "EXPERIMENTAL FINDINGS",
+      "DISCUSSION",
+      "SUMMARY AND CONCLUSION",
+      "BIBLIOGRAPHY",
+    ];
+
+    const checks = rules.map(rule => ({
+      rule,
+      passed: text.toUpperCase().includes(rule),
+    }));
+
+    const passedCount = checks.filter(
+      c => c.passed
+    ).length;
+
+    const score = Math.round(
+      (passedCount / rules.length) * 100
+    );
 
     return NextResponse.json({
       success: true,
+      score,
       checks,
     });
   } catch (error) {

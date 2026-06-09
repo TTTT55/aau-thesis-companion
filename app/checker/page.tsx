@@ -44,9 +44,36 @@ export default function CheckerPage() {
       </button>
 
       {result && (
-        <pre className="mt-8">
-          {JSON.stringify(result, null, 2)}
-        </pre>
+        <div className="mt-8">
+
+          <h2 className="text-2xl font-bold mb-4">
+            AAU Compliance Score
+          </h2>
+
+          <div className="text-6xl font-bold mb-6">
+            {result.score}%
+    	  </div>
+
+          <div className="space-y-2">
+            {result.checks.map(
+              (check: any) => (
+                <div
+                  key={check.rule}
+                  className="flex items-center gap-3"
+                >
+                  <span>
+                    {check.passed ? "✅" : "❌"}
+                  </span>
+
+                  <span>
+                    {check.rule}
+                  </span>
+                </div>
+              )
+            )}
+          </div>
+
+        </div>
       )}
     </main>
   );
