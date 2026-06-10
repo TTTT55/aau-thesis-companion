@@ -122,6 +122,46 @@ export async function POST(req: Request) {
 
     const upperText = text.toUpperCase();
 
+    const expectedOrder = [
+      "CERTIFICATE-I",
+      "CERTIFICATE-II",
+      "ACKNOWLEDGEMENT",
+      "ABSTRACT",
+      "CONTENTS",
+      "INTRODUCTION",
+      "REVIEW OF LITERATURE",
+      "MATERIALS AND METHODS",
+      "EXPERIMENTAL FINDINGS",
+      "DISCUSSION",
+      "SUMMARY AND CONCLUSION",
+      "BIBLIOGRAPHY"
+    ];
+
+    /* STEP 2 */
+    const positions = expectedOrder.map(section => ({
+      section,
+      position: upperText.indexOf(section)
+    }));
+
+    /* STEP 3 */
+    let orderErrors: string[] = [];
+
+    for (let i = 0; i < positions.length - 1; i++) {
+
+      const current = positions[i];
+      const next = positions[i + 1];
+
+      if (
+        current.position !== -1 &&
+        next.position !== -1 &&
+        current.position > next.position
+      ) {
+        orderErrors.push(
+          `${current.section} appears after ${next.section}`
+        );
+      }
+    }
+
     const checks = rules.map(rule => ({
       rule: rule.name,
 
@@ -142,6 +182,7 @@ export async function POST(req: Request) {
       success: true,
       score,
       checks,
+      orderErrors,
     });
   } catch (error) {
     console.error(error);
