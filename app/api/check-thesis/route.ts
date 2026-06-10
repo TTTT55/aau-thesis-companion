@@ -170,6 +170,10 @@ export async function POST(req: Request) {
       )
     }));
 
+    const missingSections = checks
+      .filter(check => !check.passed)
+      .map(check => check.rule);
+
     const passedCount = checks.filter(
       c => c.passed
     ).length;
@@ -183,6 +187,7 @@ export async function POST(req: Request) {
       score,
       checks,
       orderErrors,
+      missingSections,
     });
   } catch (error) {
     console.error(error);
