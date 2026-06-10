@@ -73,6 +73,27 @@ export default function CheckerPage() {
             )}
           </div>
 
+          {result.orderErrors?.length > 0 && (
+            <div className="mt-8">
+
+              <h2 className="text-xl font-bold text-red-600 mb-3">
+                Section Order Issues
+              </h2>
+
+              {result.orderErrors.map(
+                (error: string, index: number) => (
+                  <div
+                    key={index}
+                   className="mb-2"
+                  >
+                   ❌ {error}
+                  </div>
+                )
+              )}
+
+             </div>
+          )}
+
         </div>
       )}
     </main>
