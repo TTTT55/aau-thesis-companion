@@ -21,6 +21,13 @@ export async function POST(req: Request) {
 
     const text = result.value;
 
+    const wordCount = text
+      .split(/\s+/)
+      .filter(Boolean)
+      .length;
+
+    const characterCount = text.length;
+
     const rules = [
       {
         name: "Certificate-I",
@@ -122,6 +129,37 @@ export async function POST(req: Request) {
 
     const upperText = text.toUpperCase();
 
+    const bibliographyIndex =
+      upperText.indexOf("BIBLIOGRAPHY");
+
+    let bibliographyStatus =
+      "Not Found";
+
+    if (bibliographyIndex !== -1) {
+
+      const bibliographyText =
+        text.substring(bibliographyIndex);
+
+      const bibliographyLines =
+        bibliographyText
+          .split("\n")
+          .filter(line =>
+            line.trim().length > 0
+          );
+
+      if (bibliographyLines.length > 20) {
+        bibliographyStatus = "Good";
+      }
+      else if (
+        bibliographyLines.length > 5
+      ) {
+        bibliographyStatus = "Possibly Incomplete";
+      }
+      else {
+        bibliographyStatus = "Very Short";
+      }
+    }
+
     const expectedOrder = [
       "CERTIFICATE-I",
       "CERTIFICATE-II",
@@ -137,13 +175,11 @@ export async function POST(req: Request) {
       "BIBLIOGRAPHY"
     ];
 
-    /* STEP 2 */
     const positions = expectedOrder.map(section => ({
       section,
       position: upperText.indexOf(section)
     }));
 
-    /* STEP 3 */
     let orderErrors: string[] = [];
 
     for (let i = 0; i < positions.length - 1; i++) {
@@ -174,6 +210,9 @@ export async function POST(req: Request) {
       .filter(check => !check.passed)
       .map(check => check.rule);
 
+    const foundSections =
+      checks.filter(c => c.passed).length;
+
     const passedCount = checks.filter(
       c => c.passed
     ).length;
@@ -188,6 +227,14 @@ export async function POST(req: Request) {
       checks,
       orderErrors,
       missingSections,
+      bibliographyStatus,
+
+      statistics: {
+        wordCount,
+        characterCount,
+        foundSections,
+        totalSections: rules.length,
+      }
     });
   } catch (error) {
     console.error(error);

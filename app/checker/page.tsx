@@ -76,6 +76,40 @@ export default function CheckerPage() {
             {result.score}%
     	  </div>
 
+          <div className="border rounded-lg p-4 mb-8">
+
+            <h3 className="font-bold mb-3">
+              Document Statistics
+            </h3>
+
+            <div>
+              Words:
+              {" "}
+              {result.statistics.wordCount}
+            </div>
+
+            <div>
+              Characters:
+              {" "}
+              {result.statistics.characterCount}
+            </div>
+
+            <div>
+              Sections Found:
+              {" "}
+              {result.statistics.foundSections}
+              /
+              {result.statistics.totalSections}
+            </div>
+
+            <div>
+              Bibliography:
+              {" "}
+              {result.bibliographyStatus}
+            </div>
+
+          </div>
+
           <div className="space-y-2">
             {result.checks.map(
               (check: any) => (
